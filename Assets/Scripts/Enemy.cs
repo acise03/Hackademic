@@ -61,4 +61,14 @@ public class Enemy : MonoBehaviour
         currentFrame = 0;
         spriteRenderer.sprite = frames[currentFrame];
     }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("collided");
+        if (other.CompareTag("paper"))
+        {        Debug.Log("de");
+
+            Destroy(gameObject);
+        }
+    }
+
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -15,6 +13,7 @@ public class AnswerQuestion : MonoBehaviour
 
     public void OnAnswerQuestionPressed()
     {
-        SceneManager.LoadScene("Questions");
+        Time.timeScale = 0f; 
+        SceneManager.LoadScene("Questions", LoadSceneMode.Additive);
     }
 }

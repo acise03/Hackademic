@@ -215,9 +215,9 @@ public class aiCode : MonoBehaviour
         string r = convert(response.choices[0].message.content);
         Debug.Log(r);
         int rating = Int32.Parse(r);
-        feedbackText.text += "\n\nYour answer rating is: " + rating + "/10";
+        feedbackText.text += "\n\nYour points for this question is: " + rating + "/1";
         Debug.Log(rating);
-        Points.rating = rating + 5;
+        Points.rating += rating * 5;
     }
 
     private string convert(string input)
