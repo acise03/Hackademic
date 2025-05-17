@@ -54,7 +54,7 @@ public class aiCode : MonoBehaviour
     void Start()
     {
         questionPrompts.Add("Generate a multiple choice question with 4 choices (A-D) about the topic. Format it as: Question: <text> \nA) <option1> \nB) <option2> \nC) <option3> \nD) <option4>");
-        questionPrompts.Add("Generate a fill-in-the-blank question about the topic. Format it as: Question: [_________].");
+        questionPrompts.Add("Generate a fill-in-the-blank question about the topic. Format it as: Question: <text> [____] <text>.");
 
         StartCoroutine(ReadApiKey());
         System.Random rand = new System.Random();
@@ -183,7 +183,7 @@ public class aiCode : MonoBehaviour
         Message systemMsg = new Message
         {
             role = "system",
-            content = "Use second person in your respones. You are an AI assistant tasked with grading the user's answer the practice problems for their upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Only output one number: a rating of the user's answer out of 10. The following question was asked: " + lastQuestion
+            content = "Use second person in your respones. You are an AI assistant tasked with grading the user's answer the practice problems for their upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Only output one number, the points they would get from the question, which is out of 1 (your output would be 1 if the user was right or 0 if they were wrong). The following question was asked: " + lastQuestion
         };
 
         Message feedbackMsg = new Message
@@ -217,6 +217,7 @@ public class aiCode : MonoBehaviour
         int rating = Int32.Parse(r);
         feedbackText.text += "\n\nYour answer rating is: " + rating + "/10";
         Debug.Log(rating);
+        Points.rating = rating + 5;
     }
 
     private string convert(string input)
