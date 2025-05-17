@@ -3,17 +3,11 @@ using UnityEngine.UI;
 
 public class NextQuestion : MonoBehaviour
 {
-    public Button NextButton;
+    public Button SubmitButton;
     public aiCode aiCodeScript;
 
     void Start()
     {
-        NextButton.onClick.AddListener(OnNextPressed);
-    }
-
-    public void OnNextPressed()
-    {
-        int value = UnityEngine.Random.Range(0, 2);
-        aiCodeScript.AskNextQuestion(value);
+        SubmitButton.onClick.AddListener(aiCodeScript.SubmitAnswer);
     }
 }
