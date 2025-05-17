@@ -43,9 +43,9 @@ public class aiCode : MonoBehaviour
     private string apiKey;
     private const string endpoint = "https://api.groq.com/openai/v1/chat/completions";
 
-    public TextMeshProUGUI outputText;    
-    public TMP_InputField userAnswerInput;   
-    public TextMeshProUGUI feedbackText;     
+    public TextMeshProUGUI outputText;
+    public TMP_InputField userAnswerInput;
+    public TextMeshProUGUI feedbackText;
 
     private List<string> questionPrompts = new List<string>();
     private int currentQuestionIndex = 0;
@@ -93,7 +93,7 @@ public class aiCode : MonoBehaviour
         Message systemMsg = new Message
         {
             role = "user",
-            content = "You are an AI assistant tasked with generating questions for the user's upcoming test. (Background information: You are to refer to the user as " + TestInfo.nickname + ", who is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + "."
+            content = "You are an AI assistant tasked with generating questions for the user's upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Remember to keep responses as short and clean as possible."
         };
 
         Message questionMsg = new Message
@@ -124,7 +124,7 @@ public class aiCode : MonoBehaviour
         ResponseBody response = JsonUtility.FromJson<ResponseBody>(responseText);
         string finishedResponse = convert(response.choices[0].message.content);
         outputText.text = finishedResponse;
-        lastQuestion = outputText.text; 
+        lastQuestion = outputText.text;
     }
 
     public void SubmitAnswer()
