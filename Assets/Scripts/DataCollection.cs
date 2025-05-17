@@ -8,10 +8,10 @@ using UnityEngine.SceneManagement;
 
 public static class TestInfo
 {
-    public static string nickname;
-    public static string grade;
-    public static string course;
-    public static string topic;
+    public static string nickname = "John";
+    public static string grade = "10";
+    public static string course = "Science";
+    public static string topic = "Human Body Organ Systems";
 }
 public class DataCollection : MonoBehaviour
 {
