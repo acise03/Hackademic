@@ -53,8 +53,8 @@ public class aiCode : MonoBehaviour
 
     void Start()
     {
-        questionPrompts.Add("Generate a multiple choice question with 4 answer choices");
-        questionPrompts.Add("Generate a fill in the blank question");
+        questionPrompts.Add("Generate a multiple choice question with 4 choices (A-D) about the topic. Format it as: Question: <text> \nA) <option1> \nB) <option2> \nC) <option3> \nD) <option4>");
+        questionPrompts.Add("Generate a fill-in-the-blank question about the topic. Format it as: Question: [_________].");
 
         StartCoroutine(ReadApiKey());
         System.Random rand = new System.Random();
@@ -92,8 +92,8 @@ public class aiCode : MonoBehaviour
     {
         Message systemMsg = new Message
         {
-            role = "user",
-            content = "You are an AI assistant tasked with generating questions for the user's upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Remember to keep responses as short and clean as possible."
+            role = "system",
+            content = "Use second person in your respones. You are an AI assistant tasked with generating questions for the user's upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Never include the answer in the question and follow the format provided"
         };
 
         Message questionMsg = new Message
@@ -136,12 +136,12 @@ public class aiCode : MonoBehaviour
     IEnumerator SendAnswerForFeedback(string userAnswer)
     {
         string prompt = $"The following question was asked: \"{lastQuestion}\". " +
-                        $"The user answered: \"{userAnswer}\". Please give constructive feedback and indicate whether the answer is correct.";
+                        $"The user answered: \"{userAnswer}\". Please grade the users answer and if they are right, tell them that but also provide some relevant information or explanation. If they are wrong, tell them why they are wrong and give them the right answer";
 
         Message systemMsg = new Message
         {
             role = "system",
-            content = "You are a helpful tutor giving feedback on a student's test answers."
+            content = "Use second person in your respones. You are an AI assistant tasked with assessing the user's answer the practice problems for their upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ".",
         };
 
         Message feedbackMsg = new Message
@@ -172,6 +172,51 @@ public class aiCode : MonoBehaviour
         ResponseBody response = JsonUtility.FromJson<ResponseBody>(responseText);
         string feedback = convert(response.choices[0].message.content);
         feedbackText.text = feedback;
+        StartCoroutine(numericalGrade(userAnswer));
+
+    }
+    IEnumerator numericalGrade(string userAnswer)
+    {
+        Debug.Log("heh");
+        string prompt = userAnswer;
+
+        Message systemMsg = new Message
+        {
+            role = "system",
+            content = "Use second person in your respones. You are an AI assistant tasked with grading the user's answer the practice problems for their upcoming test. (Background information: " + TestInfo.nickname + " is in grade " + TestInfo.grade + ".) They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Only output one number: a rating of the user's answer out of 10. The following question was asked: " + lastQuestion
+        };
+
+        Message feedbackMsg = new Message
+        {
+            role = "user",
+            content = prompt
+        };
+
+        RequestBody requestBody = new RequestBody
+        {
+            model = "llama-3.1-8b-instant",
+            messages = new Message[] { systemMsg, feedbackMsg }
+        };
+
+        string jsonData = JsonUtility.ToJson(requestBody);
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        UnityWebRequest request = new UnityWebRequest(endpoint, "POST");
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+        request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+
+        yield return request.SendWebRequest();
+
+        string responseText = request.downloadHandler.text;
+
+        ResponseBody response = JsonUtility.FromJson<ResponseBody>(responseText);
+        string r = convert(response.choices[0].message.content);
+        Debug.Log(r);
+        int rating = Int32.Parse(r);
+        feedbackText.text += "\n\nYour answer rating is: " + rating + "/10";
+        Debug.Log(rating);
     }
 
     private string convert(string input)
