@@ -67,7 +67,7 @@ public class aiCode : MonoBehaviour
             model = "llama-3.1-8b-instant",
             messages = new Message[]
             {
-                new Message { role = "user", content = "Why is the sky blue?" }
+                new Message { role = "user", content = "You are an ai assistant tasked with generating questions for the user's upcoming test. You are to refer to the user as " + TestInfo.nickname + ", who is in grade " + TestInfo.grade + ". They are studying for their " + TestInfo.course + " course, specifically the topic is " + TestInfo.topic + ". Generate one multiple choice question with 4 answer choices. Then, write the answer and a short explanation." }
             }
         };
 
