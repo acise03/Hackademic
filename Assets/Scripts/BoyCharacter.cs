@@ -1,9 +1,17 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class BoyCharacter : MonoBehaviour
 {
+    public int maxHealth = 100;
+    public TMP_Text healthText;
+    private int currentHealth;
+
     public GameObject paperPrefab;
-    public float paperThrownSpeed = 10f;
+    public float paperThrownSpeed = 10f; private float damageCooldown = 1f;
+    private float lastDamageTime = -Mathf.Infinity;
+
 
     public Sprite[] frames;
     public float framesPerSecond = 20f;
@@ -15,15 +23,36 @@ public class BoyCharacter : MonoBehaviour
 
     private Vector2 lastMoveDirection = Vector2.right;
 
+    public HealthBar healthBar;
+    void UpdateHealthText(int health)
+    {
+        healthText.text = "Health: " + health.ToString() + "/100";
+
+    }
+
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (frames.Length > 0)
             spriteRenderer.sprite = frames[0];
+
+        currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("enemy") && Time.time - lastDamageTime >= damageCooldown)
+        {
+            Debug.Log("character colliddeeeeee");
+            TakeDamage(10);
+            lastDamageTime = Time.time;
+        }
     }
 
     void Update()
     {
+        Debug.Log(currentHealth + "/" + maxHealth);
         HandleMovement();
         HandleAnimation();
 
@@ -32,6 +61,14 @@ public class BoyCharacter : MonoBehaviour
             ShootPaper();
             Points.rating--;
         }
+
+        if (currentHealth == 0)
+        {
+            SceneManager.LoadScene("GameOver");
+
+        }
+
+
     }
 
     void HandleMovement()
@@ -75,13 +112,21 @@ public class BoyCharacter : MonoBehaviour
     }
 
     void ShootPaper()
-{
-    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    mouseWorldPos.z = 0f; 
-    Vector2 direction = (mouseWorldPos - transform.position).normalized;
-    GameObject paper = Instantiate(paperPrefab, transform.position, Quaternion.identity);
-    Rigidbody2D rb = paper.GetComponent<Rigidbody2D>();
-    rb.velocity = direction * paperThrownSpeed;
-}
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0f;
+        Vector2 direction = (mouseWorldPos - transform.position).normalized;
+        GameObject paper = Instantiate(paperPrefab, transform.position, Quaternion.identity);
+        Rigidbody2D rb = paper.GetComponent<Rigidbody2D>();
+        rb.velocity = direction * paperThrownSpeed;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        healthBar.SetHealth(currentHealth);
+        UpdateHealthText(currentHealth);
+    }
 
 }

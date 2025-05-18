@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - paper
+  - enemy
   layers:
   - Default
   - TransparentFX
@@ -44,4 +45,7 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 3193363489
+    locked: 0
+  - name: Behind Everything
+    uniqueID: 1066176157
     locked: 0
