@@ -1719,6 +1719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b67a227fa04fa8f40909cd4b6de59a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  oldUI: {fileID: 481846446}
   ContinueButton: {fileID: 848009532}
 --- !u!1 &1023056637
 GameObject:
@@ -2135,7 +2136,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: eb6ea6bf051e53d44bca5715e6c7b777, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

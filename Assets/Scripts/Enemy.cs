@@ -62,7 +62,6 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        currentFrame = 0;
         spriteRenderer.sprite = frames[currentFrame];
     }
 

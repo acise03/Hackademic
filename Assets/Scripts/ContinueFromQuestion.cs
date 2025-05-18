@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 public static class Points
 {
     public static int rating = 5;
+
 }
 
 public class ContinueFromQuestion : MonoBehaviour
 {
+    public GameObject oldUI;
     public Button ContinueButton;
 
     void Start()
@@ -20,6 +22,7 @@ public class ContinueFromQuestion : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        SceneManager.UnloadSceneAsync("Questions");
+        SceneManager.UnloadSceneAsync("Questions"); UIReference.oldUI.SetActive(true);
+
     }
 }
