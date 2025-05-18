@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameOver.unity
     guid: f785ed7e1bb278540aa784eea22878d2
+  - enabled: 1
+    path: Assets/Scenes/UploadNotes.unity
+    guid: b16f63c7be441714eb9c92905c8d14ec
   m_configObjects: {}

@@ -18,6 +18,8 @@ public static class TestInfo
     public static string topic = "Arithmetic";
     public static int correctAnswers = 0;
     public static int totalQuestions;
+    public static string providedNotes;
+    public static bool ifNotesProvided = false;
     public static List<string> notes = new List<string>();
 }
 

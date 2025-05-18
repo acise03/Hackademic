@@ -59,18 +59,36 @@ public class aiCode : MonoBehaviour
 
     IEnumerator SendRequest(string prompt)
     {
-        string context = $"Use second person in your responses. You are an AI assistant creating questions for {TestInfo.nickname}, a grade {TestInfo.grade} student studying {TestInfo.course}. Topic: {TestInfo.topic}. Never include the answer and follow the format provided.";
+        if (!TestInfo.ifNotesProvided)
+        {
+            string context = $"Use second person in your responses. You are an AI assistant tasked with creating questions for {TestInfo.nickname}, a grade {TestInfo.grade} student studying {TestInfo.course}. Topic: {TestInfo.topic}. Never include the answer and follow the format provided.";
 
-        yield return SendChatRequest(
-            new Message[] {
+            yield return SendChatRequest(
+                new Message[] {
                 new Message { role = "system", content = context },
                 new Message { role = "user", content = prompt }
-            },
-            response =>
-            {
-                lastQuestion = convert(response);
-                outputText.text = lastQuestion;
-            });
+                },
+                response =>
+                {
+                    lastQuestion = convert(response);
+                    outputText.text = lastQuestion;
+                });
+        }
+        else
+        {
+            string context = $"Use second person in your responses. You are an AI assistant tasked with creating questions for {TestInfo.nickname}, with an upcoming test. Their notes are here: {TestInfo.providedNotes} Never include the answer and follow the format provided when making questions.";
+
+            yield return SendChatRequest(
+                new Message[] {
+                new Message { role = "system", content = context },
+                new Message { role = "user", content = prompt }
+                },
+                response =>
+                {
+                    lastQuestion = convert(response);
+                    outputText.text = lastQuestion;
+                });
+        }
     }
 
     public void SubmitAnswer()
@@ -80,42 +98,79 @@ public class aiCode : MonoBehaviour
 
     IEnumerator SendAnswerForFeedback(string answer)
     {
-        string prompt = $"The following question was asked: \"{lastQuestion}\". The user answered: \"{answer}\". Assess the answer. If correct, explain briefly. If wrong, explain and give the correct answer.";
+        if (!TestInfo.ifNotesProvided)
+        {
+            string prompt = $"You asked this question: \"{lastQuestion}\". I answered: \"{answer}\". Provide feedback my the answer. If correct, explain briefly. If wrong, explain and give the correct answer. Feel free to suggest memorization or study tricks such as mnemonics, visualization or the method of loci.";
 
-        string context = $"Use second person. You are an AI assistant assessing practice questions for {TestInfo.nickname}, a grade {TestInfo.grade} student in {TestInfo.course} on the topic {TestInfo.topic}.";
+            string context = $"Use second person. You are an AI assistant assessing practice questions for {TestInfo.nickname}, a grade {TestInfo.grade} student in {TestInfo.course} on the topic {TestInfo.topic}.";
 
-        yield return SendChatRequest(
-            new Message[] {
+            yield return SendChatRequest(
+                new Message[] {
                 new Message { role = "system", content = context },
                 new Message { role = "user", content = prompt }
-            },
-            response =>
-            {
-                string feedback = convert(response);
-                feedbackText.text = feedback;
-            });
+                },
+                response =>
+                {
+                    string feedback = convert(response);
+                    feedbackText.text = feedback;
+                    Debug.Log(feedback);
+                });
 
-        StartCoroutine(NumericalGrade(answer));
+            StartCoroutine(NumericalGrade(answer));
 
-        prompt = $"The following question was asked: \"{lastQuestion}\". The user answered: \"{answer}\". Write brief formatted notes (around 3 points) on this question topic.";
+            prompt = $"The following question was asked: \"{lastQuestion}\". The user answered: \"{answer}\". Write brief formatted notes (around 3 points) on this question topic.";
 
-        yield return SendChatRequest(
-            new Message[] {
+            yield return SendChatRequest(
+                new Message[] {
                 new Message { role = "system", content = context },
                 new Message { role = "user", content = prompt }
-            },
-            response =>
-            {
-                string feedback = convert(response);
-                TestInfo.notes.Add(feedback);
-            });
+                },
+                response =>
+                {
+                    string feedback = convert(response);
+                    TestInfo.notes.Add(feedback);
+                });
 
-        StartCoroutine(NumericalGrade(answer));
+        }
+        else
+        {
+            string prompt = $"You asked this question: \"{lastQuestion}\". I answered: \"{answer}\". Provide feedback my the answer. Please use the notes provided by me in your feedback: {TestInfo.providedNotes}. If correct, explain briefly. If wrong, explain and give the correct answer. Feel free to suggest memorization or study tricks such as mnemonics, visualization or the method of loci.";
+
+            string context = $"Use second person. You are an AI assistant assessing practice questions.";
+
+            yield return SendChatRequest(
+                new Message[] {
+                new Message { role = "system", content = context },
+                new Message { role = "user", content = prompt }
+                },
+                response =>
+                {
+                    string feedback = convert(response);
+                    feedbackText.text = feedback;
+                    Debug.Log(feedback);
+                });
+
+            StartCoroutine(NumericalGrade(answer));
+
+            prompt = $"The following question was asked: \"{lastQuestion}\". The user answered: \"{answer}\". Write brief formatted notes basing off of the user's notes (around 3 points) on this question topic. The users' provided notes are: {TestInfo.providedNotes}";
+
+            yield return SendChatRequest(
+                new Message[] {
+                new Message { role = "system", content = context },
+                new Message { role = "user", content = prompt }
+                },
+                response =>
+                {
+                    string feedback = convert(response);
+                    TestInfo.notes.Add(feedback);
+                });
+
+        }
     }
 
     IEnumerator NumericalGrade(string answer)
     {
-        string context = $"Use second person. You are grading for {TestInfo.nickname}, grade {TestInfo.grade}, course {TestInfo.course}, topic {TestInfo.topic}. Only return 0 or 1. The question was: {lastQuestion}";
+        string context = $"Use second person. You are grading for {TestInfo.nickname}, grade {TestInfo.grade}, course {TestInfo.course}, topic {TestInfo.topic}. The question was: {lastQuestion}. First, decide on what you think the answer to that question is, then if the user's answer: {answer} is the same, output 1. Otherwise, output 0. There should only be one integer output, of either 0 or 1.";
 
         yield return SendChatRequest(
             new Message[] {
@@ -131,6 +186,7 @@ public class aiCode : MonoBehaviour
                 Points.rating += points * 5;
                 Debug.Log(points);
             });
+
     }
 
     IEnumerator SendChatRequest(Message[] messages, Action<string> onSuccess)

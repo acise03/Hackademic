@@ -5,7 +5,7 @@ public class Enemy : MonoBehaviour
 {
     public Sprite[] frames;
     public float framesPerSecond = 5f;
-    public float moveSpeed = 0.0f;
+    public float moveSpeed;
 
     private SpriteRenderer spriteRenderer;
     private int currentFrame;

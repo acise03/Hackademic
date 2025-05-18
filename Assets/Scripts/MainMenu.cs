@@ -6,16 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public Button StartButton;
+    public Button TopicButton;
+    public Button UploadButton;
 
     void Start()
     {
-        StartButton.onClick.AddListener(OnStartPressed);
+        TopicButton.onClick.AddListener(OnTopicPressed);
+        UploadButton.onClick.AddListener(OnUploadPressed);
     }
 
-    public void OnStartPressed()
+    public void OnTopicPressed()
     {
         SceneManager.LoadScene("TestInfo");
+    }
+    public void OnUploadPressed()
+    {
+        SceneManager.LoadScene("UploadNotes");
     }
     
 

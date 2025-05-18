@@ -4,12 +4,14 @@ using UnityEngine.SceneManagement;
 
 public class BoyCharacter : MonoBehaviour
 {
+    public TMP_Text weapons;
     public int maxHealth = 100;
     public TMP_Text healthText;
     private int currentHealth;
 
     public GameObject paperPrefab;
-    public float paperThrownSpeed = 10f; private float damageCooldown = 1f;
+    public float paperThrownSpeed = 10f;
+    private float damageCooldown = 1f;
     private float lastDamageTime = -Mathf.Infinity;
 
 
@@ -52,6 +54,7 @@ public class BoyCharacter : MonoBehaviour
 
     void Update()
     {
+        weapons.text = "Weaponry Remaining: " + Points.rating;
         Debug.Log(currentHealth + "/" + maxHealth);
         HandleMovement();
         HandleAnimation();
