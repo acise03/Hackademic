@@ -8,12 +8,12 @@ using UnityEngine.UI;
 public class Upload : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public Button uploadButton;     
+    public Button uploadButton;
 
 
     void Start()
     {
-       
+
         uploadButton.onClick.AddListener(StoreTMPText);
     }
 
@@ -21,9 +21,9 @@ public class Upload : MonoBehaviour
     {
         TestInfo.providedNotes = inputField.text;
         TestInfo.ifNotesProvided = true;
-                SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GameScene");
 
 
-        
+
     }
 }
