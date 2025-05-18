@@ -1174,6 +1174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TopicButton: {fileID: 2038187954}
   UploadButton: {fileID: 1877939348}
+  RecordButton: {fileID: 2067633941}
 --- !u!1 &2067633939
 GameObject:
   m_ObjectHideFlags: 0
